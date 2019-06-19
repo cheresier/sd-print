@@ -1,0 +1,25 @@
+{
+    "name": "Slickdeals Printable Thread",
+    "version": "1.0",
+    "description": "Shows printable view of current thread",
+    "permissions": ["activeTab", "declarativeContent"],
+    "background": {
+        "scripts": ["background.js"],
+        "persistent": false
+      },
+    "page_action": {
+        "default_icon": {
+          "16": "images/sd-print16.png",
+          "32": "images/sd-print32.png",
+          "48": "images/sd-print48.png",
+          "128": "images/sd-print128.png"
+        }
+    },
+    "icons": {
+        "16": "images/sd-print16.png",
+        "32": "images/sd-print32.png",
+        "48": "images/sd-print48.png",
+        "128": "images/sd-print128.png"
+      },
+    "manifest_version": 2
+  }
