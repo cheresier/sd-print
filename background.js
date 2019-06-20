@@ -11,9 +11,7 @@ chrome.pageAction.onClicked.addListener(function(tab) {
   }
 });
 
-/*
-Initialize the page action: if the url contains a forum id and the user is logged in, show the button.
-*/
+/* Initialize the page action: if the url contains a forum id and the user is logged in, show the button. */
 function initializePageAction(tab) {
   chrome.pageAction.hide(tab.id);
 
@@ -23,11 +21,15 @@ function initializePageAction(tab) {
       tab.id,
       {
         code: 'document.querySelector("#headerUsername").innerHTML'
-      }, 
+      },
       results => {
+        /* if found element with id #headerUsername, indicating the user is logged in */
         if (results.length > 0) {
-          //if found element with id headerUsername, indicating the user is logged in
           chrome.pageAction.show(tab.id);
+          chrome.pageAction.setTitle({
+            tabId: tab.id,
+            title: "Show Printable Version"
+          });
         }
       }
     );
@@ -35,9 +37,7 @@ function initializePageAction(tab) {
 }
 
 chrome.runtime.onInstalled.addListener(function() {
-  /*
-When first loaded, initialize the page action for all tabs.
-*/
+  /* When first loaded, initialize the page action for all tabs.*/
   chrome.tabs.query({}, tabs => {
     for (let tab of tabs) {
       initializePageAction(tab);
@@ -45,9 +45,7 @@ When first loaded, initialize the page action for all tabs.
   });
 });
 
-/*
-Each time a tab is updated, reset the page action for that tab.
-*/
+/* Each time a tab is updated, reset the page action for that tab. */
 chrome.tabs.onUpdated.addListener((id, changeInfo, tab) => {
   if (changeInfo.status === "complete") {
     initializePageAction(tab);

@@ -13,7 +13,8 @@
       "32": "images/sd-print32.png",
       "48": "images/sd-print48.png",
       "128": "images/sd-print128.png"
-    }
+    },
+    "default_title": "You need to be on a deal page an logged in for this extension to be enabled"
   },
   "icons": {
     "16": "images/sd-print16.png",
