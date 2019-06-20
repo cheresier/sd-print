@@ -1,29 +1,5 @@
 "use strict";
 
-chrome.runtime.onInstalled.addListener(function() {
-      chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
-      chrome.declarativeContent.onPageChanged.addRules([
-        {
-          conditions: [
-            new chrome.declarativeContent.PageStateMatcher({
-              pageUrl: { urlMatches: "/f/" },
-              css: ["a[id='headerUsername']"]
-            })
-          ],
-          actions: [new chrome.declarativeContent.ShowPageAction()]
-        }
-      ]);
-    });
-});
-
-// chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
-//   if (changeInfo.status === "complete" && tab.url.match(/f/)) {
-//     chrome.pageAction.show(tabId);
-//   } else {
-//     chrome.pageAction.hide(tabId);
-//   }
-// });
-
 chrome.pageAction.onClicked.addListener(function(tab) {
   var myRegexp = /\/f\/(\d*)-/g;
   var match = myRegexp.exec(tab.url);
@@ -32,5 +8,48 @@ chrome.pageAction.onClicked.addListener(function(tab) {
     chrome.tabs.update(tab.id, {
       url: "https://slickdeals.net/forums/printthread.php?t=" + threadId
     });
+  }
+});
+
+/*
+Initialize the page action: if the url contains a forum id and the user is logged in, show the button.
+*/
+function initializePageAction(tab) {
+  chrome.pageAction.hide(tab.id);
+
+  if (tab.url.match("slickdeals.net/f/")) {
+    //if on a deal page
+    chrome.tabs.executeScript(
+      tab.id,
+      {
+        code: 'document.querySelector("#headerUsername").innerHTML'
+      }, 
+      results => {
+        if (results.length > 0) {
+          //if found element with id headerUsername, indicating the user is logged in
+          chrome.pageAction.show(tab.id);
+        }
+      }
+    );
+  }
+}
+
+chrome.runtime.onInstalled.addListener(function() {
+  /*
+When first loaded, initialize the page action for all tabs.
+*/
+  chrome.tabs.query({}, tabs => {
+    for (let tab of tabs) {
+      initializePageAction(tab);
+    }
+  });
+});
+
+/*
+Each time a tab is updated, reset the page action for that tab.
+*/
+chrome.tabs.onUpdated.addListener((id, changeInfo, tab) => {
+  if (changeInfo.status === "complete") {
+    initializePageAction(tab);
   }
 });
